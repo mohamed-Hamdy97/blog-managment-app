@@ -1,12 +1,14 @@
 require('dotenv').config();
-const express = require('express')
+const express = require('express');
+const blogsRouter = require('./modules/blogs/blogs.router');
+const port = process.env.PORT || 5000
 
 const app = express()
 
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
+// app.use(express.json());
 
-app.listen(process.env.PORT, () => {
-  console.log('the server running now on ', process.env.PORT);
+app.use('/api/blogs', blogsRouter)
+
+app.listen(port, () => {
+  console.log('the server running now on... ', port);
 })
