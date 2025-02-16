@@ -1,31 +1,38 @@
-const blogModel = require("./blog.model");
+const BlogModel = require("./blog.model");
 
 const getBlog = async (req, res) => {
   console.log('getBlog ');
 }
 
 const getAllBlogs = async (req, res) => {
-  console.log('get blog');
-  res.send('getAllBlogs')
+  try {
+    const result = await BlogModel.find();
+    console.log('result');
+
+    res.send(result)
+  } catch (error) {
+    console.error(err);
+
+    return res.status(500).json({ message: 'Server error' });
+  }
 }
 
 const createBlog = async (req, res) => {
   try {
-    const { title } = req.body
+    const { title, content, category } = req.body
 
-    // console.log('create blog ,', title);
+    const result = await BlogModel.create({
+      title,
+      content,
+      category,
+    })
 
-    // await blogModel.create({
-    //   title: 'first blog',
-    //   content: 'first  description blog',
-    //   category: ['tech'],
-    // })
-
-    res.send('createBlog')
+    res.send(result)
   } catch (error) {
+    console.error(err);
 
+    return res.status(500).json({ message: 'Server error' });
   }
-
 }
 
 const updateBlog = async (req, res) => {
@@ -34,8 +41,23 @@ const updateBlog = async (req, res) => {
 }
 
 const deleteBlog = async (req, res) => {
-  console.log('deleteBlog');
-  res.send('deleteBlog')
+  try {
+    const { id } = req.params
+
+    const blog = await BlogModel.findByIdAndDelete(id);
+    console.log({ blog });
+
+
+    if (!blog) {
+      return res.status(404).json({ message: 'blog not found' });
+    }
+
+    return res.status(200).json({ message: 'blog deleted successfully .. ' })
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({ message: 'server error ' })
+  }
 }
 
 module.exports = {

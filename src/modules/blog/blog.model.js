@@ -19,7 +19,7 @@ const blogScheme = mongoose.Schema({
 })
 
 //Blog model
-const Blog = mongoose.model('Blog', blogScheme);
+const BlogModel = mongoose.model('Blog', blogScheme);
 
-module.exports = Blog;
+module.exports = BlogModel;
 
