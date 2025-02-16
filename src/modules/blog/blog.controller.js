@@ -1,3 +1,4 @@
+const blogModel = require("./blog.model");
 
 const getBlog = async (req, res) => {
   console.log('getBlog ');
@@ -9,8 +10,22 @@ const getAllBlogs = async (req, res) => {
 }
 
 const createBlog = async (req, res) => {
-  console.log('create blog');
-  res.send('createBlog')
+  try {
+    const { title } = req.body
+
+    // console.log('create blog ,', title);
+
+    // await blogModel.create({
+    //   title: 'first blog',
+    //   content: 'first  description blog',
+    //   category: ['tech'],
+    // })
+
+    res.send('createBlog')
+  } catch (error) {
+
+  }
+
 }
 
 const updateBlog = async (req, res) => {

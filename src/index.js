@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const blogsRouter = require('./modules/blogs/blogs.router');
+const blogsRouter = require('./modules/blog/blog.router');
 const authRouter = require('./modules/auth/auth.router');
 const morgan = require('morgan');
 const { connectDB } = require('./config/database.config');
