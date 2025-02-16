@@ -4,7 +4,8 @@ const mongoose = require("mongoose");
 //blog scheme
 const userScheme = mongoose.Schema({
   name: {
-    type: String
+    type: String,
+    required: true
   },
   email: {
     type: String,

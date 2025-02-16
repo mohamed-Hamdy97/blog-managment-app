@@ -1,4 +1,5 @@
 const BlogModel = require("./blog.model");
+const { getBlogById } = require("./blog.services");
 
 const getBlog = async (req, res) => {
   console.log('getBlog ');
@@ -11,7 +12,7 @@ const getAllBlogs = async (req, res) => {
 
     res.send(result)
   } catch (error) {
-    console.error(err);
+    console.error(error);
 
     return res.status(500).json({ message: 'Server error' });
   }
@@ -29,15 +30,37 @@ const createBlog = async (req, res) => {
 
     res.send(result)
   } catch (error) {
-    console.error(err);
+    console.error(error);
 
     return res.status(500).json({ message: 'Server error' });
   }
 }
 
 const updateBlog = async (req, res) => {
-  console.log('updateBlog...');
-  res.send('updateBlog')
+  try {
+    const { id } = req.params
+    const { title, content, category } = req.body
+
+    const blog = await BlogModel.findById(id)
+
+    if (!blog) {
+      return res.status(404).json({ message: 'blog not found' });
+    }
+
+    blog.title = title
+    blog.content = content
+    blog.category = category
+
+    const result = await blog.save();
+
+    console.log(result);
+
+    return res.status(200).json({ result });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({ message: 'Server error' });
+  }
 }
 
 const deleteBlog = async (req, res) => {

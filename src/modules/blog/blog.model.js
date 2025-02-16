@@ -9,9 +9,12 @@ const blogScheme = mongoose.Schema({
   },
   content: {
     type: String,
-    required: true
+    required: true,
   },
-  category: [String],
+  category: {
+    type: [String],
+    trim: true
+  },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
