@@ -3,7 +3,7 @@ const Joi = require("joi");
 const mongoose = require("mongoose");
 
 //blog scheme
-const userScheme = mongoose.Schema({
+const userScheme = new mongoose.Schema({
   name: {
     type: String,
     min: 7,
