@@ -1,8 +1,10 @@
 
-const mongoose = require("mongoose");
+const { Schema, model, default: mongoose } = require("mongoose");
+const Joi = require('joi');
+const { User } = require("../user/user.model");
 
 //Blog scheme
-const blogScheme = mongoose.Schema({
+const blogScheme = new Schema({
   title: {
     type: String,
     required: true
@@ -17,12 +19,56 @@ const blogScheme = mongoose.Schema({
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'User',
+    required: true,
   },
+  //this is additions documents for more applying on schems queries
+  comments: [{ body: String, date: Date }],
+  date: { type: Date, default: Date.now },
+  meta: {
+    votes: { type: Number, default: 0 },
+    favs: { type: Number, default: 0 },
+  }
 })
 
 //Blog model
-const BlogModel = mongoose.model('Blog', blogScheme);
+const BlogModel = model('Blog', blogScheme);
 
-module.exports = BlogModel;
+
+const blogValidate = async (blog) => {
+  const joiScheme = Joi.object({
+    title: Joi.string().max(100).min(7).required(),
+    content: Joi.string().max(100).min(10).required(),
+    category: Joi.array().items(Joi.string().valid('it', 'business', 'marketing')).required(),
+    comments: Joi.array().items(Joi.object({
+      body: Joi.string().min(3).max(200),
+      date: Joi.date().iso()
+    })),
+    date: Joi.date().iso(),
+    meta: Joi.object({
+      votes: Joi.number().integer().min(0),
+      favs: Joi.number().integer().min(0),
+    }),
+    owner: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().external(async (userId) => {
+      const userExist = await User.findById(userId)
+      if (!userExist) {
+        throw new Error("User id not found");
+      }
+    })
+  })
+
+  try {
+    const error = await Joi.assert(blog, joiScheme);
+
+    return error;
+  } catch (error) {
+    return error
+  }
+}
+
+
+module.exports = {
+  BlogModel,
+  blogValidate
+};
 

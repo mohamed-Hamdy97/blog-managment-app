@@ -1,4 +1,4 @@
-const BlogModel = require("./blog.model");
+const { BlogModel, blogValidate } = require("./blog.model");
 const { getBlogById } = require("./blog.services");
 
 const getBlog = async (req, res) => {
@@ -21,6 +21,10 @@ const getAllBlogs = async (req, res) => {
 const createBlog = async (req, res) => {
   try {
     const { title, content, category } = req.body
+    // const { error } = blogValidate(req.body);
+
+    // console.log('validtaionResult', error);
+
 
     const result = await BlogModel.create({
       title,
@@ -30,7 +34,7 @@ const createBlog = async (req, res) => {
 
     res.send(result)
   } catch (error) {
-    console.error(error);
+    console.error('console error', error.message);
 
     return res.status(500).json({ message: 'Server error' });
   }

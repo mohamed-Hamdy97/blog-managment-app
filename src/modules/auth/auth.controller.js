@@ -1,12 +1,23 @@
+const { userValidate } = require("../user/user.model");
 
 
 const login = async (req, res) => {
-  console.log('login...');
+  const { name, email, password } = req.body
+
+  const validationResult = await userValidate({ name, email, password })
+
+  if (validationResult) return res.status(400).send(validationResult.details[0].message)
+
   res.send('login')
 }
 
 const signup = async (req, res) => {
-  console.log('signup...');
+  const { name, email, password } = req.body
+
+  const validationResult = await userValidate({ name, email, password })
+
+  if (validationResult) return res.status(400).send(validationResult.details[0].message)
+
   res.send('signup')
 }
 
