@@ -1,14 +1,19 @@
 const { BlogModel, blogValidate } = require("./blog.model");
-const { getBlogById } = require("./blog.services");
-
-const getBlog = async (req, res) => {
-  console.log('getBlog ');
-}
 
 const getAllBlogs = async (req, res) => {
   try {
-    const result = await BlogModel.find();
-    console.log('result');
+    const { category } = req.query;
+
+    let filterByCategory = {};
+
+    if (category) {
+      // will depend on query param will be like "tech,health" to be ["tech", "health"]
+      const categoriesArray = category.split(',');
+
+      filterByCategory = { category: { $in: categoriesArray } };
+      console.log('categoriesArray', categoriesArray, filterByCategory);
+    }
+    const result = await BlogModel.find(filterByCategory);
 
     res.send(result)
   } catch (error) {
@@ -21,9 +26,9 @@ const getAllBlogs = async (req, res) => {
 const createBlog = async (req, res) => {
   try {
     const { title, content, category } = req.body
-    // const { error } = blogValidate(req.body);
+    const validationResult = blogValidate(req.body);
 
-    // console.log('validtaionResult', error);
+    if (validationResult) return res.status(400).send(validationResult.details[0].message)
 
 
     const result = await BlogModel.create({
@@ -89,7 +94,6 @@ const deleteBlog = async (req, res) => {
 
 module.exports = {
   getAllBlogs,
-  getBlog,
   createBlog,
   updateBlog,
   deleteBlog,

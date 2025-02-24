@@ -34,12 +34,18 @@ const blogScheme = new Schema({
 //Blog model
 const BlogModel = model('Blog', blogScheme);
 
-
 const blogValidate = async (blog) => {
   const joiScheme = Joi.object({
     title: Joi.string().max(100).min(7).required(),
     content: Joi.string().max(100).min(10).required(),
     category: Joi.array().items(Joi.string().valid('it', 'business', 'marketing')).required(),
+    owner: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().external(async (userId) => {
+      const userExist = await User.findById(userId)
+      if (!userExist) {
+        throw new Error("User id not found");
+      }
+    }),
+    //this i added just for learning and applying on validation types 
     comments: Joi.array().items(Joi.object({
       body: Joi.string().min(3).max(200),
       date: Joi.date().iso()
@@ -49,12 +55,7 @@ const blogValidate = async (blog) => {
       votes: Joi.number().integer().min(0),
       favs: Joi.number().integer().min(0),
     }),
-    owner: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().external(async (userId) => {
-      const userExist = await User.findById(userId)
-      if (!userExist) {
-        throw new Error("User id not found");
-      }
-    })
+
   })
 
   try {
