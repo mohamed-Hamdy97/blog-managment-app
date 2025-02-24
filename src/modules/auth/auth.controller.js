@@ -5,16 +5,19 @@ const { encryptPassword, comparePasswords } = require("./auth.service");
 const login = async (req, res) => {
   const { name, email, password } = req.body
 
-  const validationResult = await userValidate({ name, email, password })
-
-  if (validationResult) return res.status(400).send(validationResult.details[0].message)
-
   try {
-    const comparePassResult = await comparePasswords('$2b$10$bSLSesCxdMPf3dhkQAKSv.iX7.iRBKOa19/Gj3SusSg2487HP30Wu', password)
+    const validationResult = await userValidate({ name, email, password })
+    if (validationResult) return res.status(400).send(validationResult.details[0].message)
 
+    const searchResult = await User.findOne({ email })
+    const comparePassResult = await comparePasswords(searchResult.password, password)
+    if (!searchResult || !comparePassResult) return res.status(400).send('email or pass is invalid')
+
+    //will replace with token
+    return res.status(200).send(true)
   } catch (error) {
     console.log(error)
-
+    return res.status(400).send('something went wrong')
   }
 }
 
