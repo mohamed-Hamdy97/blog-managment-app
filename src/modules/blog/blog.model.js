@@ -20,7 +20,6 @@ const blogScheme = new Schema({
   owner: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
   },
   //this is additions documents for more applying on schems queries
   comments: [{ body: String, date: Date }],
@@ -39,12 +38,7 @@ const blogValidate = async (blog) => {
     title: Joi.string().max(100).min(7).required(),
     content: Joi.string().max(100).min(10).required(),
     category: Joi.array().items(Joi.string().valid('it', 'business', 'marketing')).required(),
-    owner: Joi.string().regex(/^[0-9a-fA-F]{24}$/).required().external(async (userId) => {
-      const userExist = await User.findById(userId)
-      if (!userExist) {
-        throw new Error("User id not found");
-      }
-    }),
+    owner: Joi.string().required(),
     //this i added just for learning and applying on validation types 
     comments: Joi.array().items(Joi.object({
       body: Joi.string().min(3).max(200),

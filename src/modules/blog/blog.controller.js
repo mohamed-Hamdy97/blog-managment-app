@@ -25,8 +25,8 @@ const getAllBlogs = async (req, res) => {
 
 const createBlog = async (req, res) => {
   try {
-    const { title, content, category } = req.body
-    const validationResult = blogValidate(req.body);
+    const { title, content, category, owner } = req.body
+    const validationResult = await blogValidate(req.body);
 
     if (validationResult) return res.status(400).send(validationResult.details[0].message)
 
@@ -35,11 +35,12 @@ const createBlog = async (req, res) => {
       title,
       content,
       category,
+      owner
     })
 
-    res.send(result)
+    res.status(200).send(result)
   } catch (error) {
-    console.error('console error', error.message);
+    console.error('console error', error);
 
     return res.status(500).json({ message: 'Server error' });
   }
@@ -49,6 +50,9 @@ const updateBlog = async (req, res) => {
   try {
     const { id } = req.params
     const { title, content, category } = req.body
+
+    const validationResult = await blogValidate(req.body);
+    if (validationResult) return res.status(400).send(validationResult.details[0].message)
 
     const blog = await BlogModel.findById(id)
 
@@ -62,9 +66,7 @@ const updateBlog = async (req, res) => {
 
     const result = await blog.save();
 
-    console.log(result);
-
-    return res.status(200).json({ result });
+    return res.status(200).json(result);
   } catch (error) {
     console.error(error);
 
@@ -77,8 +79,6 @@ const deleteBlog = async (req, res) => {
     const { id } = req.params
 
     const blog = await BlogModel.findByIdAndDelete(id);
-    console.log({ blog });
-
 
     if (!blog) {
       return res.status(404).json({ message: 'blog not found' });
