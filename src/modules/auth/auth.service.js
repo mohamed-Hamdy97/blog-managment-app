@@ -1,5 +1,6 @@
 
 
+const JWT = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 
 const encryptPassword = async (plainPassword, saltRounds) => {
@@ -27,7 +28,17 @@ const comparePasswords = async (storedHash, userProvidedPassword) => {
 
 }
 
+const generateToken = (payload) => {
+  //generate token 
+  const token = JWT.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN
+  })
+  return token
+}
+
+
 module.exports = {
   encryptPassword,
-  comparePasswords
+  comparePasswords,
+  generateToken,
 }

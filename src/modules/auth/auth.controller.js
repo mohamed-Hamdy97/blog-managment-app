@@ -1,5 +1,6 @@
+const _ = require('lodash')
 const { userValidate, User } = require("../user/user.model");
-const { encryptPassword, comparePasswords } = require("./auth.service");
+const { encryptPassword, comparePasswords, generateToken } = require("./auth.service");
 
 
 const login = async (req, res) => {
@@ -13,8 +14,12 @@ const login = async (req, res) => {
     const comparePassResult = await comparePasswords(searchResult.password, password)
     if (!searchResult || !comparePassResult) return res.status(400).send('email or pass is invalid')
 
-    //will replace with token
-    return res.status(200).send(true)
+    //generate token 
+    const token = generateToken({ userId: searchResult._id })
+
+    const response = _.pick(searchResult, ['_id', 'name', 'email'])
+
+    return res.status(200).setHeader("x-auth-token", token).send({ ...response, token })
   } catch (error) {
     console.log(error)
     return res.status(400).send('something went wrong')
@@ -37,9 +42,16 @@ const signup = async (req, res) => {
     const hashedPass = await encryptPassword(password, 10)
 
     const newUser = new User({ name, email, password: hashedPass });
+
+    //generate token here also after signup logically
+    const token = generateToken({ userId: newUser._id })
+    res.setHeader("x-auth-token", token);
+
     const saveUserResult = await newUser.save();
 
-    return res.status(200).send({ email: saveUserResult.email, name: saveUserResult.name, _id: saveUserResult._id })
+    const pickedUser = _.pick(saveUserResult, ['_id', 'name', 'email'])
+
+    return res.status(200).send({ ...pickedUser, token })
   } catch (error) {
     console.log(error)
     return res.status(400).send('something went wrong')
