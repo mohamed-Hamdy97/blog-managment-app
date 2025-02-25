@@ -1,4 +1,4 @@
-[BlogApp.postman_collection.json](https://github.com/user-attachments/files/18952622/BlogApp.postman_collection.json)# 📝 Blog Management API
+
 
 A simple **Node.js & Express** API for managing blog posts with authentication using **JWT & MongoDB**.
 
@@ -24,5 +24,5 @@ npm start
 ----
 before that you just request env file
 
-## for Api docs you cean see attached postman collection
-
+# 📝 Blog Management API
+[BlogApp.postman_collection.json](https://github.com/user-attachments/files/18952622/BlogApp.postman_collection.json)
