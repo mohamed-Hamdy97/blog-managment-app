@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { userValidate, User } = require("../user/user.model");
+const { User } = require("../user/user.model");
+const { userValidate } = require("./auth.service");
 const { encryptPassword, comparePasswords, generateToken } = require("./auth.service");
 
 

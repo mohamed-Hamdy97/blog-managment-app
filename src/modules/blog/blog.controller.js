@@ -1,4 +1,5 @@
-const { BlogModel, blogValidate } = require("./blog.model");
+const { BlogModel } = require("./blog.model");
+const { blogValidate } = require("./blog.service");
 
 const getAllBlogs = async (req, res) => {
   try {
@@ -11,7 +12,6 @@ const getAllBlogs = async (req, res) => {
       const categoriesArray = category.split(',');
 
       filterByCategory = { category: { $in: categoriesArray } };
-      console.log('categoriesArray', categoriesArray, filterByCategory);
     }
     const result = await BlogModel.find(filterByCategory);
 

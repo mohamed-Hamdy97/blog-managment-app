@@ -16,7 +16,6 @@ app.use(express.json());
 
 //custom middleware 
 app.use(function (req, res, next) {
-  console.log('looding---');
   next()
 })
 app.get('env') === 'development' && app.use(morgan('tiny'))
